@@ -1,10 +1,16 @@
 import vagones.*
+import locomotoras.*
 
 class Formaciones{
 	const formacion = []
+	const locomotoras = []
 	
 	method agregarVagon(unVagon){
 		formacion.add(unVagon)
+	}
+	
+	method agregarLagon(unaLocomotora){
+		locomotoras.add(unaLocomotora)
 	}
 	
 	method quitarVagon(unVagon){
@@ -58,4 +64,46 @@ class Formaciones{
 	method estaEquilibradaEnPasajeros(){
 		return (self.vagonConMasPasajeros().cantidadDePasajeros() - self.vagonConMenosPasajeros().cantidadDePasajeros()) <= 20
 	}
+	
+	method estaOrganizado(){
+		return not(1..formacion.size() - 1).any{
+			idx => not formacion.get(idx - 1).esPopular() and formacion.get(idx).esPopular()
+		}
+	}
+	
+	method velocidadMaxima(){
+		return locomotoras.min{locomotora => locomotora.velocidadMaxima()}.velocidadMaxima()
+	}
+	
+	method esEficiente(){
+		return locomotoras.all({locomotora => locomotora.esEficiente()})
+	}
+	
+	method pesoDeLosVagones(){
+		return formacion.sum({f => f.pesoMaximo()})
+	}
+	
+	method pesoDeLasLocomotoras(){
+		return locomotoras.sum({l => l.peso()})
+	}
+	
+	method pesoMaximoDeLaFormacion(){
+		return self.pesoDeLosVagones() + self.pesoDeLasLocomotoras()
+	}
+	
+	method sumaDelArrastre(){
+		return locomotoras.sum({l => l.cuantoPesoPuedeArrastrar()})
+	}
+	
+	method puedeMoverse(){
+		return self.sumaDelArrastre() >= self.pesoMaximoDeLaFormacion()
+	}
+	
+	method kilosDeEmpujeQueFaltan(){
+		return 0.max(self.pesoMaximoDeLaFormacion() - self.sumaDelArrastre())
+	}
+	
+	
 }
+
+
